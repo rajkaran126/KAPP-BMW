@@ -349,18 +349,6 @@ Adjust values in `frontend/src/components/Scene3D/Lighting.jsx`
 
 Update `frontend/tailwind.config.js` color palette
 
----
 
-##  Credits
-
-Built with:
-- React Three Fiber & Drei
-- Three.js
-- Express.js & Sequelize
-- OpenAI GPT-4
-- Tailwind CSS
-- GSAP
-
----
 
 
