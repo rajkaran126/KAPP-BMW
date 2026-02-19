@@ -171,7 +171,7 @@ npm run dev
 
 ---
 
-## ⚙️ Environment Variables
+##  Environment Variables
 
 ### Backend (.env)
 
@@ -193,7 +193,7 @@ VITE_API_URL=http://localhost:5000
 
 ---
 
-## 🎮 Usage
+##  Usage
 
 ### Exploring the 3D Showroom
 
