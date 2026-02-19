@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Variables */
+:root {
+  --color-graphite: #111111;
+  --color-graphite-light: #1a1a1a;
+  --color-bmw-blue: #1c69d4;
+  --color-bmw-blue-light: #8aa4ff;
+  --color-warm-beige: #d6c2a1;
+  --color-warm-brown: #8b7355;
+}
+
+/* Global Resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-graphite);
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Premium Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 3.5rem;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 2.5rem;
+  line-height: 1.2;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-graphite);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-bmw-blue);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-bmw-blue-light);
+}
+
+/* Glass Morphism Utility */
+.glass {
+  background: rgba(17, 17, 17, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Premium Gradient */
+.gradient-bmw {
+  background: linear-gradient(135deg, #1c69d4 0%, #0d47a1 100%);
+}
+
+.gradient-warm {
+  background: linear-gradient(135deg, #d6c2a1 0%, #8b7355 100%);
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply px-6 py-3 rounded-lg font-semibold transition-all duration-300;
+  @apply bg-bmw-blue hover:bg-bmw-blue-dark;
+  @apply transform hover:scale-105 active:scale-95;
+  box-shadow: 0 4px 15px rgba(28, 105, 212, 0.3);
+}
+
+.btn-secondary {
+  @apply px-6 py-3 rounded-lg font-semibold transition-all duration-300;
+  @apply bg-transparent border-2 border-bmw-blue text-bmw-blue;
+  @apply hover:bg-bmw-blue hover:text-white;
+}
+
+/* Canvas Container */
+.canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 1;
+}
+
+/* Overlay UI */
+.overlay-ui {
+  position: fixed;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.overlay-ui>* {
+  pointer-events: auto;
+}
+
+/* Smooth Animations */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  animation: shimmer 3s infinite linear;
+  background: linear-gradient(to right,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%);
+  background-size: 1000px 100%;
+}
+
+/* Loading Spinner */
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-bmw-blue);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Fade in on load */
+.fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dashboard Utility Classes */
+.bg-white\/3 { background-color: rgba(255, 255, 255, 0.03); }
+.bg-white\/5 { background-color: rgba(255, 255, 255, 0.05); }
+.bg-white\/8 { background-color: rgba(255, 255, 255, 0.08); }
+.border-white\/8 { border-color: rgba(255, 255, 255, 0.08); }
+.hover\:bg-white\/3:hover { background-color: rgba(255, 255, 255, 0.03); }
+.hover\:bg-white\/5:hover { background-color: rgba(255, 255, 255, 0.05); }
+
+/* Sidebar active state */
+.sidebar-active {
+  background: rgba(28, 105, 212, 0.2);
+  border-left: 3px solid #1c69d4;
+}
+
+/* Table row hover */
+tr:hover td { background-color: rgba(255,255,255,0.02); }
+
+/* Input focus ring */
+input:focus, select:focus {
+  box-shadow: 0 0 0 2px rgba(28, 105, 212, 0.3);
+}
+
+/* Smooth page transitions */
+main > div > div {
+  animation: fadeInUp 0.3s ease-out;
+}
