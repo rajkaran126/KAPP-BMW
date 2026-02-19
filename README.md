@@ -3,12 +3,6 @@
 > **Premium BMW Virtual Showroom** - An immersive 3D web experience built for BMW Internal
 
 A full-stack web application featuring a cinematic 3D BMW showroom with WebGL rendering, AI-powered chatbot, and comprehensive sales management system.
-
-![BMW Showroom](https://img.shields.io/badge/BMW-Showroom-1c69d4?style=for-the-badge&logo=bmw)
-![React](https://img.shields.io/badge/React-18.2-61dafb?style=for-the-badge&logo=react)
-![Three.js](https://img.shields.io/badge/Three.js-0.160-black?style=for-the-badge&logo=three.js)
-![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js)
-
 ---
 
 ##  Features
