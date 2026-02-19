@@ -11,28 +11,28 @@ A full-stack web application featuring a cinematic 3D BMW showroom with WebGL re
 
 ---
 
-## 🎯 Features
+##  Features
 
-### 🚗 Immersive 3D Experience
+###  Immersive 3D Experience
 - **WebGL-powered showroom** with React Three Fiber
 - **Professional lighting** system (Key, Rim, Fill lights + HDRI)
 - **ACES Filmic tone mapping** for photorealistic rendering
 - **Scroll-based camera navigation** through 3D space
 - **Interactive BMW models** with metallic paint shaders
 
-### 🤖 AI-Powered Chatbot
+###  AI-Powered Chatbot
 - **OpenAI GPT-4 integration** for intelligent assistance
 - **BMW knowledge base** with model specifications
 - **Glass-morphism UI** with dark luxury styling
 - Real-time conversation with context awareness
 
-### 💾 Advanced Database
+###  Advanced Database
 - **MySQL database** with Sequelize ORM
 - **Triggers**: BMW model validation, invoice logging
 - **Cursor procedure**: Employee sales summary generation
 - Full CRUD operations for all entities
 
-### 🎨 Premium Design
+###  Premium Design
 - **BMW brand colors**: Graphite black, BMW blue, warm beige accents
 - **Glass-morphism effects** with backdrop blur
 - **Smooth GSAP animations** and transitions
@@ -40,7 +40,7 @@ A full-stack web application featuring a cinematic 3D BMW showroom with WebGL re
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 kapp-bmw-automobile/
@@ -98,7 +98,7 @@ kapp-bmw-automobile/
 
 ---
 
-## 🚀 Installation
+##  Installation
 
 ### Prerequisites
 
@@ -235,7 +235,7 @@ SELECT * FROM Employee_Sales_Summary ORDER BY totalCarsSold DESC;
 
 ---
 
-## 🎨 BMW Models Available
+##  BMW Models Available
 
 | Series | Models |
 |--------|--------|
@@ -246,7 +246,7 @@ SELECT * FROM Employee_Sales_Summary ORDER BY totalCarsSold DESC;
 
 ---
 
-## 🔧 Technical Specifications
+##  Technical Specifications
 
 ### Lighting System
 
@@ -300,7 +300,7 @@ SELECT * FROM Employee_Sales_Summary ORDER BY totalCarsSold DESC;
 
 ---
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Database Connection Issues
 
@@ -329,13 +329,13 @@ GRANT ALL PRIVILEGES ON kapp_bmw.* TO 'root'@'localhost';
 
 ---
 
-## 📝 License
+##  License
 
 Internal BMW Project - All Rights Reserved
 
 ---
 
-## 👨‍💻 Developer Notes
+##  Developer Notes
 
 ### Adding New BMW Models
 
@@ -351,7 +351,7 @@ Update `frontend/tailwind.config.js` color palette
 
 ---
 
-## 🙏 Credits
+##  Credits
 
 Built with:
 - React Three Fiber & Drei
@@ -363,4 +363,4 @@ Built with:
 
 ---
 
-**Made with ❤️ for BMW Internal Engineering Team**
+
