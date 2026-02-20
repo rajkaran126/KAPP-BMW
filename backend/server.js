@@ -93,7 +93,8 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
     try {
         // Sync all models — alter:true updates existing tables without dropping data
-        await sequelize.sync({ alter: true });
+        // Sync all models — avoiding alter: true to prevent startup crashes on existing tables
+        await sequelize.sync();
         console.log('✓ Database synchronized');
 
         app.listen(PORT, () => {

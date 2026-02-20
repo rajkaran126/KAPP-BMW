@@ -64,8 +64,23 @@ router.put('/:id', async (req, res) => {
         const employee = await Employee.findByPk(req.params.id);
         if (!employee) return res.status(404).json({ error: 'Employee not found' });
 
-        const { Name, Address } = req.body;
+        const { Name, Address, qualifications } = req.body;
         await employee.update({ Name, Address });
+
+        // Update qualifications if provided
+        if (qualifications !== undefined) {
+            // Remove old
+            await EmployeeQualification.destroy({ where: { EmpID: employee.EmpID } });
+
+            // Add new
+            if (Array.isArray(qualifications)) {
+                for (const q of qualifications) {
+                    if (q.trim()) {
+                        await EmployeeQualification.create({ EmpID: employee.EmpID, qualification: q.trim() });
+                    }
+                }
+            }
+        }
 
         const result = await Employee.findByPk(employee.EmpID, {
             include: [{ model: EmployeeQualification, as: 'qualifications' }]
