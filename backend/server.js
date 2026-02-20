@@ -12,6 +12,7 @@ const Car = require('./models/Car');
 const Customer = require('./models/Customer');
 const Invoice = require('./models/Invoice');
 const EmployeeCar = require('./models/EmployeeCar');
+const User = require('./models/User'); // User model for Auth
 
 // ─── Define Associations ───────────────────────────────────────────────────────
 
@@ -69,6 +70,7 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/reports', reportRoutes); // cursor-based stored procedures
+app.use('/api/auth', require('./routes/auth')); // Authentication routes
 
 // Health check
 app.get('/api/health', (req, res) => {

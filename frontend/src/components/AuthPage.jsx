@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { authAPI } from '../utils/api';
 
 const GLASS_DARK = {
     background: 'rgba(10,10,24,0.7)',
@@ -8,12 +9,6 @@ const GLASS_DARK = {
 };
 
 export default function AuthPage({ onLogin }) {
-    // Users state to allow password updates during the session
-    const [users, setUsers] = useState([
-        { username: 'karan', password: 'karan123', name: 'Karan', role: 'Admin' },
-        { username: 'sales', password: 'sales123', name: 'Sales Manager', role: 'Sales' },
-    ]);
-
     const [mode, setMode] = useState('login');         // 'login' | 'signup' | 'forgot'
     const [form, setForm] = useState({ name: '', username: '', password: '', confirm: '' });
     const [error, setError] = useState('');
@@ -33,61 +28,37 @@ export default function AuthPage({ onLogin }) {
         e.preventDefault();
         setLoading(true);
         setError('');
-        await new Promise(r => setTimeout(r, 800));
 
-        if (mode === 'login') {
-            const user = users.find(u => u.username === form.username && u.password === form.password);
-            if (user) {
-                onLogin(user);
+        try {
+            if (mode === 'login') {
+                const response = await authAPI.login({
+                    username: form.username,
+                    password: form.password
+                });
+                onLogin(response.data);
             } else {
-                setError('Invalid username or password.');
-            }
-        } else {
-            // Signup mode
-            if (form.password !== form.confirm) { setError('Passwords do not match.'); setLoading(false); return; }
-            if (form.password.length < 6) { setError('Password must be at least 6 characters.'); setLoading(false); return; }
+                // Signup mode
+                if (form.password !== form.confirm) { setError('Passwords do not match.'); setLoading(false); return; }
+                if (form.password.length < 6) { setError('Password must be at least 6 characters.'); setLoading(false); return; }
 
-            // Allow creating new user
-            const newUser = { name: form.name || form.username, username: form.username, role: 'Staff' };
-            // In a real app we'd save this, here we just login immediately
-            onLogin(newUser);
+                const response = await authAPI.signup({
+                    name: form.name || form.username,
+                    username: form.username,
+                    password: form.password,
+                    role: 'Staff'
+                });
+                onLogin(response.data);
+            }
+        } catch (err) {
+            setError(err.response?.data?.error || 'Authentication failed. Please try again.');
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const handleResetSubmit = async e => {
         e.preventDefault();
-        if (!resetForm.username || !resetForm.newPassword || !resetForm.confirmPassword) {
-            setResetError('All fields are required.');
-            return;
-        }
-        if (resetForm.newPassword !== resetForm.confirmPassword) {
-            setResetError('Passwords do not match.');
-            return;
-        }
-        if (resetForm.newPassword.length < 6) {
-            setResetError('Password must be at least 6 characters.');
-            return;
-        }
-
-        setResetLoading(true);
-        setResetError('');
-        await new Promise(r => setTimeout(r, 1000));
-
-        // Find and update user
-        const userIndex = users.findIndex(u => u.username === resetForm.username);
-        if (userIndex === -1) {
-            setResetError('User not found.');
-            setResetLoading(false);
-            return;
-        }
-
-        const newUsers = [...users];
-        newUsers[userIndex] = { ...newUsers[userIndex], password: resetForm.newPassword };
-        setUsers(newUsers);
-
-        setResetLoading(false);
-        setResetSuccess(true);
+        setResetError('Password reset validation not implemented in backend yet. Please contact admin.');
     };
 
     const switchTab = m => {

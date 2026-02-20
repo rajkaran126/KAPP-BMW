@@ -58,5 +58,12 @@ export const chatAPI = {
     sendMessage: (message, history, user) => api.post('/chat', { message, history, user }).then((res) => res.data).catch(handleError),
 };
 
-export default { employeeAPI, carAPI, customerAPI, invoiceAPI, reportsAPI, chatAPI };
+// ─── Auth API ─────────────────────────────────────────────────────────────────
+export const authAPI = {
+    login: (credentials) => api.post('/auth/login', credentials).then(handleResponse).catch(handleError),
+    signup: (data) => api.post('/auth/signup', data).then(handleResponse).catch(handleError),
+    updateProfile: (id, data) => api.put(`/auth/${id}`, data).then(handleResponse).catch(handleError),
+};
+
+export default { employeeAPI, carAPI, customerAPI, invoiceAPI, reportsAPI, chatAPI, authAPI };
 
