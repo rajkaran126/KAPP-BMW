@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://kapp-bmw.onrender.com/api';
+const API_URL = 'http://localhost:5000/api'; // Use local backend for development
 
 const api = axios.create({
     baseURL: API_URL,
@@ -49,8 +49,18 @@ export const invoiceAPI = {
 
 // ─── Reports API ────────────────────────────────────────────────────────────────
 export const reportsAPI = {
-    getSalesReport: () => api.get('/reports/sales-performance').then(handleResponse).catch(handleError),
-    getAvailableCarsSummary: () => api.get('/reports/inventory-status').then(handleResponse).catch(handleError),
+    getSalesReport: () => api.get('/reports/sales').then(handleResponse).catch(handleError),
+    getAvailableCarsSummary: () => api.get('/reports/available-cars').then(handleResponse).catch(handleError),
+};
+
+// ─── Analytics API ──────────────────────────────────────────────────────────────
+export const analyticsAPI = {
+    getOverview: () => api.get('/analytics/overview').then(handleResponse).catch(handleError),
+    getSalesTrend: () => api.get('/analytics/sales-trend').then(handleResponse).catch(handleError),
+    getModelPerformance: () => api.get('/analytics/model-performance').then(handleResponse).catch(handleError),
+    getEmployeePerformance: () => api.get('/analytics/employee-performance').then(handleResponse).catch(handleError),
+    getCustomerInsights: () => api.get('/analytics/customer-insights').then(handleResponse).catch(handleError),
+    getAIInsights: (data) => api.post('/analytics/ai-insights', data).then(handleResponse).catch(handleError),
 };
 
 // ─── AI Chat API ──────────────────────────────────────────────────────────────
@@ -65,5 +75,5 @@ export const authAPI = {
     updateProfile: (id, data) => api.put(`/auth/${id}`, data).then(handleResponse).catch(handleError),
 };
 
-export default { employeeAPI, carAPI, customerAPI, invoiceAPI, reportsAPI, chatAPI, authAPI };
+export default { employeeAPI, carAPI, customerAPI, invoiceAPI, reportsAPI, analyticsAPI, chatAPI, authAPI };
 

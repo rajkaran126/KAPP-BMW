@@ -15,6 +15,10 @@ const Employee = sequelize.define('Employee', {
     Address: {
         type: DataTypes.TEXT,
         allowNull: true
+    },
+    designation: {
+        type: DataTypes.STRING(255),
+        allowNull: true
     }
 }, {
     tableName: 'Employees',

@@ -63,6 +63,7 @@ const customerRoutes = require('./routes/customers');
 const invoiceRoutes = require('./routes/invoices');
 const chatRoutes = require('./routes/chat');
 const reportRoutes = require('./routes/reports');
+const analyticsRoutes = require('./routes/analytics');
 
 app.use('/api/employees', employeeRoutes);
 app.use('/api/cars', carRoutes);
@@ -70,6 +71,7 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/reports', reportRoutes); // cursor-based stored procedures
+app.use('/api/analytics', analyticsRoutes); // AI-powered analytics
 app.use('/api/auth', require('./routes/auth')); // Authentication routes
 
 // Health check
