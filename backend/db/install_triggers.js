@@ -14,7 +14,10 @@ async function installTriggers() {
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
-        multipleStatements: true
+        multipleStatements: true,
+        ssl: (process.env.DB_SSL === 'true' || (process.env.DB_HOST && process.env.DB_HOST.includes('tidbcloud.com'))) ? {
+            rejectUnauthorized: true
+        } : undefined
     });
 
     try {
