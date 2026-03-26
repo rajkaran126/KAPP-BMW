@@ -50,7 +50,11 @@ export default function AuthPage({ onLogin }) {
                 onLogin(response.data);
             }
         } catch (err) {
-            setError(err.response?.data?.error || 'Authentication failed. Please try again.');
+            if (!err.response) {
+                setError('Cannot connect to server. Please make sure the backend is running on port 5000.');
+            } else {
+                setError(err.response?.data?.error || 'Authentication failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }

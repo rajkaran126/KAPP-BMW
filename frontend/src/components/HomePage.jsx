@@ -192,7 +192,7 @@ export default function HomePage({ onEnterDashboard, user, onLogout }) {
                         { title: 'Customer Database', desc: 'Full customer profiles with phone, city, country, and purchase history.' },
                         { title: 'Sales Invoices', desc: 'Create invoices that automatically update car availability in real time.' },
                         { title: 'Sales Reports', desc: 'Generate detailed reports on employee performance and car availability.' },
-                        { title: 'AI Assistant', desc: 'Ask your AI assistant anything about your dealership data.' },
+                        { title: 'Analytics Dashboard', desc: 'Visual charts and business insights powered by your real-time dealership data.' },
                     ].map((f, i) => (
                         <div key={i} className="p-6 rounded-2xl transition-all group hover:scale-[1.02] cursor-default"
                             style={{

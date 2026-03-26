@@ -63,11 +63,6 @@ export const analyticsAPI = {
     getAIInsights: (data) => api.post('/analytics/ai-insights', data).then(handleResponse).catch(handleError),
 };
 
-// ─── AI Chat API ──────────────────────────────────────────────────────────────
-export const chatAPI = {
-    sendMessage: (message, history, user) => api.post('/chat', { message, history, user }).then((res) => res.data).catch(handleError),
-};
-
 // ─── Auth API ─────────────────────────────────────────────────────────────────
 export const authAPI = {
     login: (credentials) => api.post('/auth/login', credentials).then(handleResponse).catch(handleError),
@@ -75,5 +70,5 @@ export const authAPI = {
     updateProfile: (id, data) => api.put(`/auth/${id}`, data).then(handleResponse).catch(handleError),
 };
 
-export default { employeeAPI, carAPI, customerAPI, invoiceAPI, reportsAPI, analyticsAPI, chatAPI, authAPI };
+export default { employeeAPI, carAPI, customerAPI, invoiceAPI, reportsAPI, analyticsAPI, authAPI };
 

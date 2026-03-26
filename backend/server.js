@@ -61,7 +61,6 @@ const employeeRoutes = require('./routes/employees');
 const carRoutes = require('./routes/cars');
 const customerRoutes = require('./routes/customers');
 const invoiceRoutes = require('./routes/invoices');
-const chatRoutes = require('./routes/chat');
 const reportRoutes = require('./routes/reports');
 const analyticsRoutes = require('./routes/analytics');
 
@@ -69,7 +68,6 @@ app.use('/api/employees', employeeRoutes);
 app.use('/api/cars', carRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/invoices', invoiceRoutes);
-app.use('/api/chat', chatRoutes);
 app.use('/api/reports', reportRoutes); // cursor-based stored procedures
 app.use('/api/analytics', analyticsRoutes); // AI-powered analytics
 app.use('/api/auth', require('./routes/auth')); // Authentication routes
@@ -94,8 +92,7 @@ app.use((err, req, res, next) => {
 
 const startServer = async () => {
     try {
-        // Sync all models — alter:true updates existing tables without dropping data
-        // Sync all models — avoiding alter: true to prevent startup crashes on existing tables
+        // Sync all models — CREATE TABLE IF NOT EXISTS (safe for TiDB Cloud)
         await sequelize.sync();
         console.log('✓ Database synchronized');
 
