@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 // ─── Icon ──────────────────────────────────────────────────────────────────────
-export const Icon = ({ path, size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+export const Icon = ({ path, size = 20, className = "" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
         <path d={path} />
     </svg>
 );
@@ -29,14 +29,15 @@ export const ICONS = {
 
 // ─── Badge ─────────────────────────────────────────────────────────────────────
 export function Badge({ status }) {
-    const styles = {
-        available: { bg: 'rgba(34,197,94,0.15)', border: 'rgba(34,197,94,0.35)', color: '#4ade80' },
-        sold: { bg: 'rgba(239,68,68,0.15)', border: 'rgba(239,68,68,0.35)', color: '#f87171' },
-    };
-    const s = styles[status] || { bg: 'rgba(107,114,128,0.15)', border: 'rgba(107,114,128,0.3)', color: '#9ca3af' };
+    const isAvail = status === 'available';
     return (
-        <span className="px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide"
-            style={{ background: s.bg, border: `1px solid ${s.border}`, color: s.color }}>
+        <span className="px-3 py-1.5 rounded-full text-[11px] font-bold tracking-[0.15em] uppercase shadow-inner"
+            style={{ 
+                background: isAvail ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', 
+                border: `1px solid ${isAvail ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                color: isAvail ? '#4ade80' : '#f87171',
+                boxShadow: isAvail ? '0 0 10px rgba(34,197,94,0.2)' : '0 0 10px rgba(239,68,68,0.2)'
+            }}>
             {status}
         </span>
     );
@@ -44,29 +45,28 @@ export function Badge({ status }) {
 
 // ─── StatCard ──────────────────────────────────────────────────────────────────
 export function StatCard({ label, value, icon, color = 'blue' }) {
-    const textColors = { blue: '#60a5fa', green: '#4ade80', red: '#f87171', purple: '#c084fc' };
-    const glowColors = { blue: 'rgba(28,105,212,0.15)', green: 'rgba(34,197,94,0.12)', red: 'rgba(239,68,68,0.12)', purple: 'rgba(168,85,247,0.12)' };
-    const borderColors = { blue: 'rgba(28,105,212,0.25)', green: 'rgba(34,197,94,0.2)', red: 'rgba(239,68,68,0.2)', purple: 'rgba(168,85,247,0.2)' };
+    const colors = { 
+        blue: { from: '#3b82f6', to: '#1d4ed8', glow: 'rgba(59,130,246,0.3)' },
+        green: { from: '#22c55e', to: '#15803d', glow: 'rgba(34,197,94,0.3)' },
+        red: { from: '#ef4444', to: '#b91c1c', glow: 'rgba(239,68,68,0.3)' },
+        purple: { from: '#a855f7', to: '#7e22ce', glow: 'rgba(168,85,247,0.3)' }
+    };
+    const c = colors[color] || colors.blue;
+
     return (
-        <div className="p-5 flex items-center gap-4 rounded-xl transition-all duration-300 hover:scale-[1.03] group cursor-default"
-            style={{
-                background: 'rgba(255,255,255,0.04)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-                border: `1px solid ${borderColors[color]}`,
-                boxShadow: `0 4px 24px ${glowColors[color]}`,
-            }}>
-            <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110"
-                style={{
-                    background: `linear-gradient(135deg, ${glowColors[color]}, rgba(255,255,255,0.03))`,
-                    color: textColors[color],
-                    border: `1px solid ${borderColors[color]}`,
-                }}>
-                <Icon path={icon} size={22} />
+        <div className="glass-panel p-6 rounded-[1.5rem] flex items-center gap-5 transition-transform duration-500 hover:-translate-y-1.5 group cursor-default">
+            
+            <div className="relative">
+                <div className="absolute inset-0 blur-xl opacity-60 rounded-full transition-opacity duration-500 group-hover:opacity-100" style={{ background: c.glow }} />
+                <div className="relative p-4 rounded-2xl flex items-center justify-center text-white border border-white/20 shadow-[0_4px_12px_rgba(0,0,0,0.5)] z-10"
+                    style={{ background: `linear-gradient(135deg, ${c.from}, ${c.to})` }}>
+                    <Icon path={icon} size={24} className="group-hover:scale-110 transition-transform duration-500" />
+                </div>
             </div>
+
             <div>
-                <p className="text-gray-400 text-xs font-semibold uppercase tracking-widest">{label}</p>
-                <p className="text-white text-2xl font-bold mt-0.5" style={{ lineHeight: 1.15 }}>{value}</p>
+                <p className="text-gray-400 text-[11px] font-bold uppercase tracking-[0.2em] mb-1">{label}</p>
+                <p className="text-white text-3xl font-black tracking-tight" style={{ textShadow: `0 0 20px ${c.glow}` }}>{value}</p>
             </div>
         </div>
     );
@@ -75,26 +75,25 @@ export function StatCard({ label, value, icon, color = 'blue' }) {
 // ─── Modal ─────────────────────────────────────────────────────────────────────
 export function Modal({ title, onClose, children }) {
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}
-            style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
-            <div className="w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl overflow-hidden"
-                style={{
-                    background: 'rgba(12,12,30,0.97)',
-                    backdropFilter: 'blur(24px)',
-                    WebkitBackdropFilter: 'blur(24px)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
-                }}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300" 
+            style={{ background: 'rgba(5,5,15,0.85)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
+            onClick={onClose}>
+            
+            <div className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[2rem] glass-panel border border-white/20 shadow-[0_30px_100px_rgba(0,0,0,0.8)] animate-in slide-in-from-bottom-8 duration-500"
                 onClick={e => e.stopPropagation()}>
-                {/* Gradient top accent bar */}
-                <div style={{ height: '2px', background: 'linear-gradient(to right, #1c69d4, #3b82f6, rgba(96,165,250,0.2))' }} />
-                <div className="p-6">
-                    <div className="flex items-center justify-between mb-5 pb-4"
-                        style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                        <h3 className="text-white text-lg font-bold">{title}</h3>
+                
+                {/* Decorative top glow */}
+                <div className="h-1 w-full bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500 shadow-[0_0_20px_rgba(99,102,241,0.5)]" />
+                
+                <div className="p-8">
+                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10 relative">
+                        {/* Title glow */}
+                        <div className="absolute -top-10 -left-10 w-32 h-32 bg-blue-500/20 rounded-full blur-[40px] pointer-events-none" />
+                        <h3 className="text-2xl font-black text-white tracking-tight relative z-10">{title}</h3>
+                        
                         <button onClick={onClose}
-                            className="text-gray-500 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/8">
-                            <Icon path={ICONS.close} size={16} />
+                            className="text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 p-2.5 rounded-xl transition-all hover:rotate-90 relative z-10">
+                            <Icon path={ICONS.close} size={18} />
                         </button>
                     </div>
                     {children}
@@ -104,37 +103,27 @@ export function Modal({ title, onClose, children }) {
     );
 }
 
-// ─── Input Style ───────────────────────────────────────────────────────────────
-export const inputStyle = {
-    background: 'rgba(255,255,255,0.06)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    color: '#fff',
-    borderRadius: '0.625rem',
-    padding: '0.625rem 0.875rem',
-    width: '100%',
-    fontSize: '0.875rem',
-    outline: 'none',
-    transition: 'border-color 0.15s',
-};
-
 // ─── FormField ─────────────────────────────────────────────────────────────────
 export function FormField({ label, name, type = 'text', value, onChange, required, placeholder, options }) {
+    const inputClasses = "w-full bg-black/40 border border-white/15 text-white rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-blue-500 focus:bg-blue-500/5 focus:ring-4 focus:ring-blue-500/20 transition-all placeholder-gray-600 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]";
+
     return (
-        <div className="space-y-1.5">
-            <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wide">
-                {label}{required && <span className="text-blue-400 ml-1">*</span>}
+        <div className="space-y-2 relative">
+            <label className="block text-gray-400 text-[11px] font-bold uppercase tracking-widest pl-1">
+                {label}{required && <span className="text-blue-500 ml-1 drop-shadow-[0_0_5px_rgba(59,130,246,0.8)]">*</span>}
             </label>
             {options ? (
-                <select name={name} value={value} onChange={onChange} required={required} style={inputStyle}>
-                    <option value="">Select...</option>
-                    {options.map(o => <option key={o.value} value={o.value} style={{ background: '#0c0c1e' }}>{o.label}</option>)}
-                </select>
+                <div className="relative">
+                    <select name={name} value={value} onChange={onChange} required={required} className={`${inputClasses} appearance-none cursor-pointer`}>
+                        <option value="">Select an option...</option>
+                        {options.map(o => <option key={o.value} value={o.value} className="bg-gray-900 text-white p-2">{o.label}</option>)}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/></svg>
+                    </div>
+                </div>
             ) : (
-                <input type={type} name={name} value={value} onChange={onChange} required={required} placeholder={placeholder}
-                    style={inputStyle}
-                    onFocus={e => e.target.style.border = '1px solid rgba(59,130,246,0.7)'}
-                    onBlur={e => e.target.style.border = '1px solid rgba(255,255,255,0.1)'}
-                    className="placeholder-gray-600" />
+                <input type={type} name={name} value={value} onChange={onChange} required={required} placeholder={placeholder} className={inputClasses} />
             )}
         </div>
     );
@@ -143,56 +132,57 @@ export function FormField({ label, name, type = 'text', value, onChange, require
 // ─── Table ─────────────────────────────────────────────────────────────────────
 export function Table({ columns, data, onEdit, onDelete, emptyMsg }) {
     if (!data.length) return (
-        <div className="text-center py-20 flex flex-col items-center gap-3 text-gray-500">
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-                <Icon path={ICONS.warning} size={24} />
+        <div className="py-24 flex flex-col items-center justify-center gap-4 glass-panel rounded-3xl border-dashed">
+            <div className="w-20 h-20 rounded-[2rem] bg-gray-900/50 border border-white/10 flex items-center justify-center text-gray-500 shadow-inner">
+                <Icon path={ICONS.warning} size={32} />
             </div>
-            <p className="text-sm">{emptyMsg || 'No records found'}</p>
+            <p className="text-gray-400 font-medium tracking-wide">{emptyMsg || 'No records found in the database.'}</p>
         </div>
     );
+    
     return (
-        <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-                <thead>
-                    <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                        {columns.map(c => (
-                            <th key={c.key} className="text-left text-gray-500 font-semibold py-3 px-4 text-xs uppercase tracking-widest">{c.label}</th>
-                        ))}
-                        {(onEdit || onDelete) && <th className="text-right text-gray-500 font-semibold py-3 px-4 text-xs uppercase tracking-widest">Actions</th>}
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((row, i) => (
-                        <tr key={i} className="border-b border-white/5 hover:bg-white/4 transition-colors duration-150"
-                            style={{ background: i % 2 === 1 ? 'rgba(255,255,255,0.015)' : 'transparent' }}>
+        <div className="glass-panel rounded-[2rem] overflow-hidden border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+            <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full text-sm whitespace-nowrap">
+                    <thead>
+                        <tr className="bg-white/[0.03] border-b border-white/10">
                             {columns.map(c => (
-                                <td key={c.key} className="py-3.5 px-4 text-gray-300">
-                                    {c.render ? c.render(row) : (row[c.key] ?? '—')}
-                                </td>
+                                <th key={c.key} className="text-left text-gray-400 font-bold py-5 px-6 text-[11px] uppercase tracking-[0.2em]">{c.label}</th>
                             ))}
-                            {(onEdit || onDelete) && (
-                                <td className="py-3.5 px-4 text-right">
-                                    <div className="flex gap-2 justify-end">
-                                        {onEdit && (
-                                            <button onClick={() => onEdit(row)} title="Edit"
-                                                className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/25 hover:text-blue-300 transition-all">
-                                                <Icon path={ICONS.edit} size={14} />
-                                            </button>
-                                        )}
-                                        {onDelete && (
-                                            <button onClick={() => onDelete(row)} title="Delete"
-                                                className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/25 hover:text-red-300 transition-all">
-                                                <Icon path={ICONS.trash} size={14} />
-                                            </button>
-                                        )}
-                                    </div>
-                                </td>
-                            )}
+                            {(onEdit || onDelete) && <th className="text-right text-gray-400 font-bold py-5 px-6 text-[11px] uppercase tracking-[0.2em]">Actions</th>}
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {data.map((row, i) => (
+                            <tr key={i} className="group border-b border-white/5 hover:bg-blue-500/[0.03] transition-colors focus-within:bg-blue-500/[0.03]">
+                                {columns.map(c => (
+                                    <td key={c.key} className="py-4 px-6 text-gray-300 group-hover:text-white transition-colors">
+                                        {c.render ? c.render(row) : (row[c.key] ?? '—')}
+                                    </td>
+                                ))}
+                                {(onEdit || onDelete) && (
+                                    <td className="py-4 px-6 text-right">
+                                        <div className="flex gap-2 justify-end opacity-20 group-hover:opacity-100 transition-opacity">
+                                            {onEdit && (
+                                                <button onClick={() => onEdit(row)} title="Edit Record"
+                                                    className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white shadow-lg transition-all hover:scale-110">
+                                                    <Icon path={ICONS.edit} size={15} />
+                                                </button>
+                                            )}
+                                            {onDelete && (
+                                                <button onClick={() => onDelete(row)} title="Delete Record"
+                                                    className="p-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white shadow-lg transition-all hover:scale-110">
+                                                    <Icon path={ICONS.trash} size={15} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
+                                )}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }
@@ -200,22 +190,18 @@ export function Table({ columns, data, onEdit, onDelete, emptyMsg }) {
 // ─── SectionHeader ─────────────────────────────────────────────────────────────
 export function SectionHeader({ title, subtitle, onAdd, addLabel }) {
     return (
-        <div className="flex items-center justify-between mb-6">
-            <div className="flex items-start gap-3">
-                <div className="w-1 h-8 rounded-full mt-0.5 shrink-0"
-                    style={{ background: 'linear-gradient(to bottom, #60a5fa, rgba(28,105,212,0.15))' }} />
+        <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center gap-4">
+                <div className="w-1.5 h-10 rounded-full bg-gradient-to-b from-blue-400 via-indigo-500 to-purple-600 shadow-[0_0_15px_rgba(99,102,241,0.6)]" />
                 <div>
-                    <h2 className="text-2xl font-bold text-white">{title}</h2>
-                    {subtitle && <p className="text-gray-400 text-sm mt-0.5">{subtitle}</p>}
+                    <h2 className="text-3xl font-black text-white tracking-tight">{title}</h2>
+                    {subtitle && <p className="text-gray-400 text-sm mt-1 font-medium tracking-wide">{subtitle}</p>}
                 </div>
             </div>
             {onAdd && (
                 <button onClick={onAdd}
-                    className="flex items-center gap-2 px-4 py-2.5 text-white rounded-xl text-sm font-semibold transition-all hover:scale-[1.03] active:scale-[0.98]"
-                    style={{
-                        background: 'linear-gradient(135deg, #1c69d4, #0d47a1)',
-                        boxShadow: '0 4px 16px rgba(28,105,212,0.35)',
-                    }}>
+                    className="glass-button flex items-center gap-2 px-6 py-3 text-white rounded-2xl text-[13px] font-bold tracking-wide uppercase transition-all shadow-[0_10px_30px_rgba(37,99,235,0.4)] hover:shadow-[0_15px_40px_rgba(37,99,235,0.5)]"
+                    style={{ background: 'linear-gradient(135deg, #2563eb, #4f46e5)' }}>
                     <Icon path={ICONS.plus} size={16} />
                     {addLabel || 'Add New'}
                 </button>
@@ -226,22 +212,25 @@ export function SectionHeader({ title, subtitle, onAdd, addLabel }) {
 
 // ─── Toast ─────────────────────────────────────────────────────────────────────
 export function Toast({ msg, type, onClose }) {
-    useEffect(() => { const t = setTimeout(onClose, 3500); return () => clearTimeout(t); }, [onClose]);
-    const accent = type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#6b7280';
+    useEffect(() => { const t = setTimeout(onClose, 4000); return () => clearTimeout(t); }, [onClose]);
+    const isSuccess = type === 'success';
+    
     return (
-        <div className="fixed bottom-6 right-6 z-[100] text-white px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium"
-            style={{
-                background: 'rgba(12,12,30,0.96)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderLeft: `3px solid ${accent}`,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-            }}>
-            <div style={{ color: accent }}>
-                <Icon path={type === 'success' ? ICONS.check : ICONS.warning} size={16} />
+        <div className="fixed bottom-8 right-8 z-[100] animate-in slide-in-from-right-8 fade-in duration-500">
+            <div className="glass-panel px-6 py-4 rounded-2xl flex items-center gap-4 border"
+                style={{ 
+                    background: 'rgba(10,12,25,0.9)', 
+                    borderColor: isSuccess ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)',
+                    boxShadow: isSuccess ? '0 20px 40px rgba(34,197,94,0.15)' : '0 20px 40px rgba(239,68,68,0.15)'
+                }}>
+                <div className="p-2 rounded-full shadow-inner" style={{ background: isSuccess ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)' }}>
+                    <Icon path={isSuccess ? ICONS.check : ICONS.warning} size={18} className={isSuccess ? 'text-green-400' : 'text-red-400'} />
+                </div>
+                <span className="text-sm font-semibold tracking-wide text-white">{msg}</span>
+                <button onClick={onClose} className="ml-2 text-gray-500 hover:text-white transition-colors">
+                    <Icon path={ICONS.close} size={16} />
+                </button>
             </div>
-            <span>{msg}</span>
         </div>
     );
 }

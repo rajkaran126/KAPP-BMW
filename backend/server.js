@@ -71,6 +71,7 @@ app.use('/api/invoices', invoiceRoutes);
 app.use('/api/reports', reportRoutes); // cursor-based stored procedures
 app.use('/api/analytics', analyticsRoutes); // AI-powered analytics
 app.use('/api/auth', require('./routes/auth')); // Authentication routes
+app.use('/api/chat', require('./routes/chat')); // Chatbot routes
 
 // Health check
 app.get('/api/health', (req, res) => {

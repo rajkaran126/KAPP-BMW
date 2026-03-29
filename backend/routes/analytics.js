@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const sequelize = require('../config/database');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { OpenAI } = require('openai');
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const apiKey = process.env.OPENAI_API_KEY;
+const openai = apiKey ? new OpenAI({ 
+    apiKey,
+    baseURL: "https://api.groq.com/openai/v1", // Using Groq API Endpoint
+}) : null;
 
 // ─── GET /api/analytics/overview ──────────────────────────────────────────────
 // Returns high-level KPIs aggregated from all tables
@@ -155,9 +159,13 @@ INSIGHT: [Short heading]
 DETAIL: [One concise sentence]
 `;
 
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
+        if (!openai) throw new Error('AI API Not Configured');
+
+        const completion = await openai.chat.completions.create({
+            model: 'llama-3.1-8b-instant',
+            messages: [{ role: 'user', content: prompt }]
+        });
+        const text = completion.choices[0].message.content;
 
         // Parse the structured insights
         const insights = [];
@@ -180,10 +188,10 @@ DETAIL: [One concise sentence]
         if (isQuota) {
             return res.status(429).json({
                 error: 'quota_exceeded',
-                message: 'Gemini API free-tier quota reached. Please wait a minute and try again, or upgrade your Gemini API plan.'
+                message: 'Analytics processing limit reached. Please wait a minute and try again, or upgrade your server capacity.'
             });
         }
-        res.status(500).json({ error: 'Failed to generate AI insights: ' + err.message });
+        res.status(500).json({ error: 'Failed to process analytics data: ' + err.message });
     }
 });
 

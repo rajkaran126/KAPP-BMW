@@ -4,6 +4,7 @@ import LoadingScreen from './components/LoadingScreen';
 import AuthPage from './components/AuthPage';
 import HomePage from './components/HomePage';
 import App from './App';
+import AIAgentWidget from './components/shared/AIAgentWidget';
 import './index.css';
 
 const SESSION_KEY = 'kapp_bmw_session';
@@ -77,6 +78,9 @@ function Root() {
                     onUpdateUser={handleUpdateUser}
                 />
             )}
+            
+            {/* Global LLUVIA Chatbot */}
+            {phase !== 'loading' && <AIAgentWidget />}
         </>
     );
 }
