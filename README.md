@@ -15,7 +15,7 @@ A full-stack web application featuring a cinematic 3D BMW showroom with WebGL re
 - **Interactive BMW models** with metallic paint shaders
 
 ###  AI-Powered Chatbot
-- **OpenAI GPT-4 integration** for intelligent assistance
+- **LLAMA 3.1 integration** for intelligent assistance
 - **BMW knowledge base** with model specifications
 - **Glass-morphism UI** with dark luxury styling
 - Real-time conversation with context awareness
@@ -98,7 +98,7 @@ kapp-bmw-automobile/
 
 - **Node.js** 16+ and npm
 - **MySQL** 5.7+ or **MariaDB** 10+
-- **OpenAI API Key** (for chatbot)
+- **groq API Key** (for chatbot)
 
 ### Step 1: Clone Repository
 
