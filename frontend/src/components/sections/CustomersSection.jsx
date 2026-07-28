@@ -12,7 +12,13 @@ export default function CustomersSection() {
 
     const load = async () => {
         setLoading(true);
-        try { const r = await customerAPI.getAll(); setCustomers(r.data); } catch { }
+        try { 
+            const r = await customerAPI.getAll(); 
+            const data = Array.isArray(r) ? r : (r?.data || []);
+            setCustomers(data); 
+        } catch (err) {
+            console.error('Customers load error:', err);
+        }
         setLoading(false);
     };
     useEffect(() => { load(); }, []);

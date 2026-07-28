@@ -57,9 +57,9 @@ function CarCard({ model, onClick, onHover, isHovered }) {
                     {/* Price */}
                     <div className="border-t border-white/10 pt-3">
                         <p className="text-bmw-blue text-2xl font-bold">
-                            ₹{model.price?.toLocaleString('en-IN')}
+                            {model.price >= 10000000 ? `₹${(model.price / 10000000).toFixed(2)} Cr` : `₹${(model.price / 100000).toFixed(2)} L`}
                         </p>
-                        <p className="text-gray-500 text-xs">Starting Price</p>
+                        <p className="text-gray-500 text-xs">Ex-Showroom Starting Price</p>
                     </div>
 
                     {/* Specs Grid */}

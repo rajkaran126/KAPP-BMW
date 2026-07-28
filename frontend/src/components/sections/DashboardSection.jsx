@@ -2,19 +2,32 @@ import { useState, useEffect } from 'react';
 import { carAPI, employeeAPI, customerAPI, invoiceAPI } from '../../utils/api';
 import { ICONS, StatCard, Icon } from '../shared/UIComponents';
 
+const formatINR = (val) => {
+    const num = parseFloat(val || 0);
+    if (num >= 10000000) return `₹${(num / 10000000).toFixed(2)} Cr`;
+    if (num >= 100000) return `₹${(num / 100000).toFixed(2)} L`;
+    return `₹${num.toLocaleString('en-IN')}`;
+};
+
 export default function DashboardSection({ setTab }) {
     const [stats, setStats] = useState({ cars: 0, employees: 0, customers: 0, invoices: 0, revenue: 0, available: 0 });
 
     useEffect(() => {
         Promise.all([carAPI.getAll(), employeeAPI.getAll(), customerAPI.getAll(), invoiceAPI.getAll()])
             .then(([c, e, cu, i]) => {
-                const cars = c.data; const invoices = i.data;
+                const cars = Array.isArray(c) ? c : (c?.data || []);
+                const employees = Array.isArray(e) ? e : (e?.data || []);
+                const customers = Array.isArray(cu) ? cu : (cu?.data || []);
+                const invoices = Array.isArray(i) ? i : (i?.data || []);
                 setStats({
-                    cars: cars.length, employees: e.data.length, customers: cu.data.length,
-                    invoices: invoices.length, available: cars.filter(x => x.status === 'available').length,
-                    revenue: invoices.reduce((s, x) => s + parseFloat(x.amount || 0), 0)
+                    cars: cars.length, 
+                    employees: employees.length, 
+                    customers: customers.length,
+                    invoices: invoices.length, 
+                    available: cars.filter(x => x.status === 'available').length,
+                    revenue: invoices.reduce((s, x) => s + parseFloat(x.amount || x.sale_price || 0), 0)
                 });
-            }).catch(() => { });
+            }).catch((err) => { console.error('Dashboard load error:', err); });
     }, []);
 
     return (
@@ -29,7 +42,7 @@ export default function DashboardSection({ setTab }) {
                 <StatCard label="Employees" value={stats.employees} icon={ICONS.employee} color="purple" />
                 <StatCard label="Customers" value={stats.customers} icon={ICONS.customer} color="blue" />
                 <StatCard label="Invoices" value={stats.invoices} icon={ICONS.invoice} color="red" />
-                <StatCard label="Revenue" value={`₹${(stats.revenue / 100000).toFixed(1)}L`} icon={ICONS.report} color="green" />
+                <StatCard label="Revenue" value={formatINR(stats.revenue)} icon={ICONS.report} color="green" />
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                 {[

@@ -12,7 +12,13 @@ export default function EmployeesSection() {
 
     const load = async () => {
         setLoading(true);
-        try { const r = await employeeAPI.getAll(); setEmployees(r.data); } catch { }
+        try { 
+            const r = await employeeAPI.getAll(); 
+            const data = Array.isArray(r) ? r : (r?.data || []);
+            setEmployees(data); 
+        } catch (err) {
+            console.error('Employees load error:', err);
+        }
         setLoading(false);
     };
     useEffect(() => { load(); }, []);

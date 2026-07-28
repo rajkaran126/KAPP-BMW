@@ -15,7 +15,7 @@ function BarChart({ data, valueKey, labelKey, color = '#3b82f6' }) {
                         <div className="w-full rounded-t-sm transition-all duration-500 hover:opacity-80 relative"
                             style={{ height: `${Math.max(pct, 4)}%`, background: color, minHeight: '4px' }}>
                             <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-xs text-white bg-gray-800 rounded px-1.5 py-0.5 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
-                                ₹{(parseFloat(d[valueKey] || 0) / 100000).toFixed(1)}L
+                                {formatINR(d[valueKey])}
                             </div>
                         </div>
                         <p className="text-gray-500 text-[10px] truncate w-full text-center">{d[labelKey]?.split(' ')[0] || ''}</p>
@@ -212,6 +212,13 @@ export default function AnalyticsSection() {
         setPdfLoading(false);
     };
 
+const formatINR = (val) => {
+    const num = parseFloat(val || 0);
+    if (num >= 10000000) return `₹${(num / 10000000).toFixed(2)} Cr`;
+    if (num >= 100000) return `₹${(num / 100000).toFixed(2)} L`;
+    return `₹${num.toLocaleString('en-IN')}`;
+};
+
     const loadData = async () => {
         setLoading(true);
         try {
@@ -222,12 +229,19 @@ export default function AnalyticsSection() {
                 analyticsAPI.getEmployeePerformance(),
                 analyticsAPI.getCustomerInsights(),
             ]);
-            setOverview(ov.data);
-            setSalesTrend(st.data);
-            setModelPerf(mp.data);
-            setEmpPerf(ep.data);
-            setCustInsights(ci.data);
+            const ovData = ov?.data || ov || {};
+            const stData = st?.data || st || [];
+            const mpData = mp?.data || mp || [];
+            const epData = ep?.data || ep || [];
+            const ciData = ci?.data || ci || { byCity: [], byCountry: [] };
+
+            setOverview(ovData);
+            setSalesTrend(Array.isArray(stData) ? stData : []);
+            setModelPerf(Array.isArray(mpData) ? mpData : []);
+            setEmpPerf(Array.isArray(epData) ? epData : []);
+            setCustInsights(ciData);
         } catch (err) {
+            console.error('Analytics load error:', err);
             setToast({ msg: 'Error loading analytics: ' + (err.response?.data?.error || err.message), type: 'error' });
         }
         setLoading(false);
@@ -268,7 +282,7 @@ export default function AnalyticsSection() {
     ];
 
     const fmt = (v) => parseFloat(v || 0).toLocaleString('en-IN');
-    const fmtL = (v) => `₹${(parseFloat(v || 0) / 100000).toFixed(1)}L`;
+    const fmtL = (v) => formatINR(v);
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center py-32 gap-4">

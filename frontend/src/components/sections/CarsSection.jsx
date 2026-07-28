@@ -12,7 +12,13 @@ export default function CarsSection() {
 
     const load = async () => {
         setLoading(true);
-        try { const r = await carAPI.getAll(); setCars(r.data); } catch { }
+        try { 
+            const r = await carAPI.getAll(); 
+            const data = Array.isArray(r) ? r : (r?.data || []);
+            setCars(data); 
+        } catch (err) {
+            console.error('Cars load error:', err);
+        }
         setLoading(false);
     };
     useEffect(() => { load(); }, []);

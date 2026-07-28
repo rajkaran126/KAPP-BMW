@@ -1,16 +1,22 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api'; // Use local backend for development
+const getBaseUrl = () => {
+    if (import.meta.env.VITE_API_URL) {
+        const url = import.meta.env.VITE_API_URL.replace(/\/$/, '');
+        return url.endsWith('/api') ? url : `${url}/api`;
+    }
+    return 'http://localhost:5000/api';
+};
 
 const api = axios.create({
-    baseURL: API_URL,
+    baseURL: getBaseUrl(),
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
 // Helper to standardise response
-const handleResponse = (response) => ({ data: response.data });
+const handleResponse = (response) => response.data;
 const handleError = (error) => {
     console.error('API Error:', error.response?.data || error.message);
     throw error;
@@ -70,5 +76,20 @@ export const authAPI = {
     updateProfile: (id, data) => api.put(`/auth/${id}`, data).then(handleResponse).catch(handleError),
 };
 
-export default { employeeAPI, carAPI, customerAPI, invoiceAPI, reportsAPI, analyticsAPI, authAPI };
+// Default export helpers for quick invocation
+export default {
+    getEmployees: employeeAPI.getAll,
+    getCars: carAPI.getAll,
+    getCustomers: customerAPI.getAll,
+    getInvoices: invoiceAPI.getAll,
+    createInvoice: invoiceAPI.create,
+    deleteInvoice: invoiceAPI.delete,
+    employeeAPI,
+    carAPI,
+    customerAPI,
+    invoiceAPI,
+    reportsAPI,
+    analyticsAPI,
+    authAPI
+};
 
