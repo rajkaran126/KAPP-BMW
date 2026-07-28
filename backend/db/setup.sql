@@ -175,8 +175,8 @@ DELIMITER ;
 -- ─── Step 5: Seed default admin user ──────────────────────────────────────────
 -- Default login: admin / admin123 (bcrypt hash of 'admin123')
 -- CHANGE THIS PASSWORD after first login!
-INSERT INTO Users (username, password, role) VALUES
-('admin', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
+INSERT INTO Users (username, password, name, role) VALUES
+('admin', 'admin123', 'System Administrator', 'Admin');
 
 -- ─── Done ──────────────────────────────────────────────────────────────────────
 SELECT 'KAPP-BMW database setup complete!' AS Status;
