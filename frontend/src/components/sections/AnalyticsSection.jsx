@@ -2,16 +2,23 @@ import { useState, useEffect, useRef } from 'react';
 import { analyticsAPI } from '../../utils/api';
 import { ICONS, StatCard, SectionHeader, Toast, Icon } from '../shared/UIComponents';
 
+const formatINR = (val) => {
+    const num = parseFloat(val || 0);
+    if (num >= 10000000) return `₹${(num / 10000000).toFixed(2)} Cr`;
+    if (num >= 100000) return `₹${(num / 100000).toFixed(2)} L`;
+    return `₹${num.toLocaleString('en-IN')}`;
+};
+
 // ─── Mini Bar Chart (SVG) ──────────────────────────────────────────────────────
 function BarChart({ data, valueKey, labelKey, color = '#3b82f6' }) {
-    if (!data.length) return <div className="text-center py-8 text-gray-500 text-sm">No trend data yet — create some invoices to see charts.</div>;
+    if (!data || !data.length) return <div className="text-center py-8 text-gray-500 text-sm">No trend data yet — create some invoices to see charts.</div>;
     const maxVal = Math.max(...data.map(d => parseFloat(d[valueKey] || 0)));
     return (
         <div className="flex items-end gap-2 h-36 w-full">
             {data.map((d, i) => {
                 const pct = maxVal > 0 ? (parseFloat(d[valueKey] || 0) / maxVal) * 100 : 0;
                 return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1 group" title={`${d[labelKey]}: ₹${parseFloat(d[valueKey] || 0).toLocaleString('en-IN')}`}>
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1 group" title={`${d[labelKey]}: ${formatINR(d[valueKey])}`}>
                         <div className="w-full rounded-t-sm transition-all duration-500 hover:opacity-80 relative"
                             style={{ height: `${Math.max(pct, 4)}%`, background: color, minHeight: '4px' }}>
                             <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-xs text-white bg-gray-800 rounded px-1.5 py-0.5 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
@@ -80,7 +87,7 @@ export default function AnalyticsSection() {
                 pdf.setLineWidth(0.4);
                 pdf.line(margin, y, pageW - margin, y); y += 5;
                 const kpis = [
-                    ['Total Revenue', `\u20b9${(parseFloat(overview.total_revenue || 0) / 100000).toFixed(2)} L`],
+                    ['Total Revenue', formatINR(overview.total_revenue)],
                     ['Total Cars', `${overview.total_cars}`],
                     ['Cars Sold', `${overview.sold_cars}`],
                     ['Cars Available', `${overview.available_cars}`],
@@ -88,7 +95,7 @@ export default function AnalyticsSection() {
                     ['Total Employees', `${overview.total_employees}`],
                     ['Total Customers', `${overview.total_customers}`],
                     ['Total Invoices', `${overview.total_invoices}`],
-                    ['Avg. Deal Value', `\u20b9${(parseFloat(overview.avg_sale_value || 0) / 100000).toFixed(2)} L`],
+                    ['Avg. Deal Value', formatINR(overview.avg_sale_value)],
                 ];
                 const colW = (contentW - 4) / 2;
                 kpis.forEach(([label, value], i) => {
