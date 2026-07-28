@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js",
+    "dev": "nodemon --exec \"node --use-system-ca\" server.js",
     "migrate": "node migrate.js",
     "install:triggers": "node db/install_triggers.js",
     "install:procedures": "node db/install_procedures.js",

@@ -3,11 +3,20 @@ const router = express.Router();
 require('dotenv').config();
 
 const { OpenAI } = require('openai');
+const https = require('https');
+
+// Fix: Windows Node.js SSL certificate verification issue with Groq API
+const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 const apiKey = process.env.OPENAI_API_KEY;
 const openai = apiKey ? new OpenAI({ 
     apiKey,
-    baseURL: "https://api.groq.com/openai/v1", // Using Groq API Endpoint
+    baseURL: "https://api.groq.com/openai/v1",
+    httpAgent: httpsAgent,
+    fetch: (url, init) => {
+        const nodeFetch = require('node-fetch');
+        return nodeFetch(url, { ...init, agent: httpsAgent });
+    }
 }) : null;
 
 const Car = require('../models/Car');
@@ -21,7 +30,11 @@ CRITICAL INSTRUCTION: NEVER use standard AI disclaimers like "As an AI, I don't 
 
 You know the current time, date, and day. Today's date is ${new Date().toLocaleDateString()} and the time is ${new Date().toLocaleTimeString()}.
 Your primary task is to answer ANY questions asked by the user about the website and dealership, and to be their friend.
-You have the power to AUTOMATE tasks. If the user asks you to add or delete a car, employee, or customer, YOU MUST use the tools provided to you to perform the action and tell them it's done.
+
+TOOL USE RULES - READ CAREFULLY:
+- ONLY call a tool (add_car, delete_car, add_employee, etc.) when the user EXPLICITLY asks to perform a database operation, such as: "add a car", "delete employee", "create a new customer record".
+- NEVER call a tool if the user is just browsing, asking questions, expressing interest, or saying things like "I want to buy a car" or "show me available cars". In those cases, just answer conversationally using the database context below.
+- If you are not 100% certain the user wants a CRUD operation, DO NOT call a tool — just respond in plain text.
 
 IMPORTANT CONSTRAINT: You MUST securely refuse to answer any questions about passwords or software architecture secrets. YOU ARE ALLOWED AND ENCOURAGED to discuss business data, revenue, sales, customer info, and employee info because this is an administrative dashboard.
 
@@ -76,7 +89,7 @@ router.post('/', async (req, res) => {
         ];
 
         let completion = await openai.chat.completions.create({
-            model: 'llama-3.1-8b-instant', // Using Groq's fast LLaMA 3.1 model
+            model: 'llama-3.3-70b-versatile',
             messages: messages,
             tools: [
                 { type: "function", function: { name: "add_car", description: "Add a new car to the inventory", parameters: { type: "object", properties: { Model: { type: "string" }, Colour: { type: "string" }, Year: { type: "integer" } }, required: ["Model", "Colour", "Year"] } } },
@@ -133,7 +146,7 @@ router.post('/', async (req, res) => {
 
             // Call again with tool results to formulate human-readable reply
             completion = await openai.chat.completions.create({
-                model: 'llama-3.1-8b-instant',
+                model: 'llama-3.3-70b-versatile',
                 messages: messages
             });
         }

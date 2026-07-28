@@ -3,6 +3,9 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+// Fix: Windows Node.js SSL certificate verification issues with external APIs
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 const sequelize = require('./config/database');
 
 // Import models
