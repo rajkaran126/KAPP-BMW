@@ -107,21 +107,21 @@ const seedData = async () => {
         const customers = await Customer.bulkCreate(customersData);
         console.log(`✓ Seeded ${customers.length} Customers.`);
 
-        // 5. Seed BMW Cars Fleet (50 cars)
+        // 5. Seed BMW Cars Fleet (50 cars) with realistic Indian Rupee prices (Lakhs & Crores)
         const modelsList = [
-            { Model: 'BMW 3 Series 330i', price: 55000 },
-            { Model: 'BMW 5 Series 530d', price: 78000 },
-            { Model: 'BMW 7 Series 740i', price: 140000 },
-            { Model: 'BMW X1 sDrive20i', price: 48000 },
-            { Model: 'BMW X3 xDrive30i', price: 65000 },
-            { Model: 'BMW X5 xDrive40i', price: 92000 },
-            { Model: 'BMW X7 xDrive40d', price: 135000 },
-            { Model: 'BMW M3 Competition', price: 95000 },
-            { Model: 'BMW M4 Coupe', price: 102000 },
-            { Model: 'BMW M5 CS', price: 150000 },
-            { Model: 'BMW i4 eDrive40', price: 68000 },
-            { Model: 'BMW i7 xDrive60', price: 165000 },
-            { Model: 'BMW iX xDrive50', price: 115000 }
+            { Model: 'BMW 3 Series 330i', price: 6000000 },    // ₹60.00 Lakhs
+            { Model: 'BMW 5 Series 530d', price: 7800000 },    // ₹78.00 Lakhs
+            { Model: 'BMW 7 Series 740i', price: 18500000 },   // ₹1.85 Crores
+            { Model: 'BMW X1 sDrive20i', price: 4900000 },     // ₹49.00 Lakhs
+            { Model: 'BMW X3 xDrive30i', price: 6800000 },     // ₹68.00 Lakhs
+            { Model: 'BMW X5 xDrive40i', price: 9800000 },     // ₹98.00 Lakhs
+            { Model: 'BMW X7 xDrive40d', price: 13000000 },    // ₹1.30 Crores
+            { Model: 'BMW M3 Competition', price: 14500000 },  // ₹1.45 Crores
+            { Model: 'BMW M4 Coupe', price: 15500000 },        // ₹1.55 Crores
+            { Model: 'BMW M5 CS', price: 19900000 },           // ₹1.99 Crores
+            { Model: 'BMW i4 eDrive40', price: 7200000 },      // ₹72.00 Lakhs
+            { Model: 'BMW i7 xDrive60', price: 21500000 },     // ₹2.15 Crores
+            { Model: 'BMW iX xDrive50', price: 12200000 }      // ₹1.22 Crores
         ];
 
         const colors = ['Mineral White', 'Black Sapphire', 'Portimao Blue', 'Phytonic Blue', 'Toronto Red', 'Isle of Man Green', 'Dravit Grey', 'Aventurin Red'];
