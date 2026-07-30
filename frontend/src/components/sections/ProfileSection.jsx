@@ -1,23 +1,42 @@
-import { ICONS, Icon, SectionHeader } from '../shared/UIComponents';
+import { useState } from 'react';
+import { ICONS, Icon, SectionHeader, Toast } from '../shared/UIComponents';
 
 export default function ProfileSection({ user, onUpdateUser }) {
+    const safeUser = user || {
+        name: 'System Administrator',
+        username: 'admin',
+        role: 'Admin',
+        avatar: null
+    };
+
+    const [nameInput, setNameInput] = useState(safeUser.name || '');
+    const [toast, setToast] = useState(null);
+
     const handleFile = (e) => {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onloadend = () => { onUpdateUser({ avatar: reader.result }); };
+        reader.onloadend = () => {
+            if (onUpdateUser) onUpdateUser({ avatar: reader.result });
+            setToast({ msg: 'Profile picture updated successfully!', type: 'success' });
+        };
         reader.readAsDataURL(file);
+    };
+
+    const handleSaveName = () => {
+        if (onUpdateUser) onUpdateUser({ name: nameInput });
+        setToast({ msg: 'Profile details saved!', type: 'success' });
     };
 
     return (
         <div>
-            <SectionHeader title="My Profile" subtitle="Manage your account" />
+            <SectionHeader title="My Profile" subtitle="Manage your account details and preferences" />
             <div className="flex gap-8 items-start">
                 {/* Avatar Card */}
                 <div className="p-8 rounded-2xl flex flex-col items-center gap-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
                     <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-blue-500/30 bg-gray-800 relative shadow-2xl">
-                        {user.avatar ? (
-                            <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                        {safeUser.avatar ? (
+                            <img src={safeUser.avatar} alt="Profile" className="w-full h-full object-cover" />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gray-900/50">
                                 <Icon path={ICONS.user} size={64} />
@@ -30,8 +49,8 @@ export default function ProfileSection({ user, onUpdateUser }) {
                             Upload Photo
                             <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
                         </label>
-                        {user.avatar && (
-                            <button onClick={() => onUpdateUser({ avatar: null })}
+                        {safeUser.avatar && (
+                            <button onClick={() => { if (onUpdateUser) onUpdateUser({ avatar: null }); setToast({ msg: 'Photo removed', type: 'info' }); }}
                                 className="flex items-center justify-center gap-2 px-6 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-sm font-semibold transition-colors border border-red-500/20">
                                 <Icon path={ICONS.trash} size={16} />
                                 Remove Photo
@@ -50,31 +69,44 @@ export default function ProfileSection({ user, onUpdateUser }) {
                         <div>
                             <label className="block text-gray-400 text-sm mb-2">Full Name</label>
                             <input
-                                value={user.name}
-                                onChange={e => onUpdateUser({ name: e.target.value })}
+                                value={nameInput}
+                                onChange={e => setNameInput(e.target.value)}
+                                onBlur={handleSaveName}
                                 className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium focus:outline-none focus:border-blue-500/50 transition-colors"
                             />
                         </div>
                         <div>
                             <label className="block text-gray-400 text-sm mb-2">Role</label>
                             <div className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-400 font-medium cursor-not-allowed opacity-70">
-                                {user.role}
+                                {safeUser.role || 'Administrator'}
                             </div>
                         </div>
                         <div>
                             <label className="block text-gray-400 text-sm mb-2">Username</label>
                             <div className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-400 font-medium cursor-not-allowed opacity-70">
-                                {user.username}
+                                {safeUser.username || 'admin'}
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-gray-400 text-sm mb-2">Access Status</label>
+                            <div className="px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold text-sm flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                Active Enterprise Session
                             </div>
                         </div>
                     </div>
-                    <div className="mt-8 pt-6 border-t border-white/10">
+                    <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
                         <p className="text-sm text-gray-500">
-                            Member since <span className="text-gray-300">February 2026</span>
+                            Member since <span className="text-gray-300">January 2026</span>
                         </p>
+                        <button onClick={handleSaveName}
+                            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors shadow-lg shadow-blue-600/20">
+                            Save Changes
+                        </button>
                     </div>
                 </div>
             </div>
+            {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
         </div>
     );
 }

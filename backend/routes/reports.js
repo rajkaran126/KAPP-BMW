@@ -11,27 +11,19 @@ const sequelize = require('../config/database');
 // Calls GenerateEmployeeSalesReport() or falls back to direct query
 router.get('/sales', async (req, res) => {
     try {
-        let data = [];
-        try {
-            const [results] = await sequelize.query('CALL GenerateEmployeeSalesReport()');
-            data = results[0] || results;
-        } catch (procErr) {
-            console.warn('Procedure not found, using fallback query:', procErr.message);
-            const [results] = await sequelize.query(`
-                SELECT 
-                    e.EmpID, 
-                    e.Name AS EmployeeName, 
-                    COUNT(i.Invoice_ID) AS total_invoices, 
-                    COALESCE(SUM(i.amount), 0) AS total_amount, 
-                    COUNT(DISTINCT i.Car_ID) AS cars_sold
-                FROM Employees e
-                LEFT JOIN Invoices i ON e.EmpID = i.EmpID
-                GROUP BY e.EmpID, e.Name
-                ORDER BY total_amount DESC
-            `);
-            data = results;
-        }
-        res.json({ data: Array.isArray(data) ? data : [] });
+        const [results] = await sequelize.query(`
+            SELECT 
+                e.EmpID, 
+                e.Name AS EmployeeName, 
+                COUNT(i.Invoice_ID) AS total_invoices, 
+                COALESCE(SUM(i.amount), 0) AS total_amount, 
+                COUNT(DISTINCT i.Car_ID) AS cars_sold
+            FROM Employees e
+            LEFT JOIN Invoices i ON e.EmpID = i.EmpID
+            GROUP BY e.EmpID, e.Name
+            ORDER BY total_amount DESC
+        `);
+        res.json({ data: Array.isArray(results) ? results : [] });
     } catch (error) {
         console.error('Error generating sales report:', error);
         res.status(500).json({ error: 'Failed to generate sales report', detail: error.message });
@@ -39,31 +31,23 @@ router.get('/sales', async (req, res) => {
 });
 
 // GET /api/reports/available-cars
-// Calls GetAvailableCarsSummary() or falls back to direct query
 router.get('/available-cars', async (req, res) => {
     try {
-        let data = [];
-        try {
-            const [results] = await sequelize.query('CALL GetAvailableCarsSummary()');
-            data = results[0] || results;
-        } catch (procErr) {
-            console.warn('Procedure not found, using fallback query:', procErr.message);
-            const [results] = await sequelize.query(`
-                SELECT 
-                    c.Car_ID, 
-                    c.Model, 
-                    c.Colour, 
-                    c.Year, 
-                    c.IL_No, 
-                    COUNT(ec.EmpID) AS seller_count
-                FROM Cars c
-                LEFT JOIN EmployeeCar ec ON c.Car_ID = ec.Car_ID
-                WHERE c.status = 'available'
-                GROUP BY c.Car_ID, c.Model, c.Colour, c.Year, c.IL_No
-            `);
-            data = results;
-        }
-        res.json({ data: Array.isArray(data) ? data : [] });
+        const [results] = await sequelize.query(`
+            SELECT 
+                c.Car_ID, 
+                c.Model, 
+                c.Colour, 
+                c.Year, 
+                c.IL_No, 
+                COUNT(ec.EmpID) AS seller_count
+            FROM Cars c
+            LEFT JOIN EmployeeCar ec ON c.Car_ID = ec.Car_ID
+            WHERE c.status = 'available'
+            GROUP BY c.Car_ID, c.Model, c.Colour, c.Year, c.IL_No
+            ORDER BY c.Car_ID ASC
+        `);
+        res.json({ data: Array.isArray(results) ? results : [] });
     } catch (error) {
         console.error('Error fetching available cars summary:', error);
         res.status(500).json({ error: 'Failed to fetch available cars summary', detail: error.message });

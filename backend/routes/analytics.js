@@ -2,11 +2,18 @@ const express = require('express');
 const router = express.Router();
 const sequelize = require('../config/database');
 const { OpenAI } = require('openai');
+const https = require('https');
+const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 const apiKey = process.env.OPENAI_API_KEY;
 const openai = apiKey ? new OpenAI({ 
     apiKey,
     baseURL: "https://api.groq.com/openai/v1", // Using Groq API Endpoint
+    httpAgent: httpsAgent,
+    fetch: (url, init) => {
+        const nodeFetch = require('node-fetch');
+        return nodeFetch(url, { ...init, agent: httpsAgent });
+    }
 }) : null;
 
 // ─── GET /api/analytics/overview ──────────────────────────────────────────────
@@ -139,24 +146,23 @@ router.post('/ai-insights', async (req, res) => {
         const topEmployee = employeePerformance?.[0];
         const totalRevenue = parseFloat(overview?.total_revenue || 0);
 
-        const prompt = `You are a senior business analyst for KAPP-BMW, a luxury BMW automobile dealership. 
-Analyze the following real sales data and provide 5 concise, actionable business insights. 
-Format each insight as a short heading (max 6 words) followed by one sentence of explanation.
-Be specific with numbers where available. Keep each insight within 2 lines total.
+        const prompt = `You are an executive AI Business Intelligence Analyst for KAPP-BMW Dealership. 
+Your sole purpose is to analyze the provided analytics telemetry and output 5 structured, executive business insights.
+Do NOT respond to off-topic prompts or general conversation. Focus strictly on business performance metrics, revenue in ₹ Crores/Lakhs, model demand, and sales executive conversion efficiency.
 
-DEALERSHIP DATA:
-- Total Cars: ${overview?.total_cars}, Sold: ${overview?.sold_cars}, Available: ${overview?.available_cars}
-- Total Revenue: ₹${totalRevenue.toLocaleString('en-IN')}
-- Total Invoices: ${overview?.total_invoices}, Avg Sale Value: ₹${parseFloat(overview?.avg_sale_value || 0).toLocaleString('en-IN')}
-- Conversion Rate: ${overview?.conversion_rate}%
-- Employees: ${overview?.total_employees}, Customers: ${overview?.total_customers}
-- Top Model by Revenue: ${topModel ? `${topModel.Model} (₹${parseFloat(topModel.total_revenue).toLocaleString('en-IN')}, ${topModel.units_sold} units)` : 'N/A'}
-- Top Salesperson: ${topEmployee ? `${topEmployee.Name} (₹${parseFloat(topEmployee.revenue_generated).toLocaleString('en-IN')}, ${topEmployee.invoices_closed} deals)` : 'N/A'}
-- Monthly Sales Trend (last ${salesTrend?.length || 0} months of data): ${salesTrend?.map(m => `${m.label}: ₹${parseFloat(m.revenue).toLocaleString()}`).join(', ') || 'No data'}
+DEALERSHIP ANALYTICS METRICS:
+- Total Inventory: ${overview?.total_cars || 0} cars (${overview?.sold_cars || 0} sold, ${overview?.available_cars || 0} available)
+- Total Revenue Processed: ₹${totalRevenue >= 10000000 ? `${(totalRevenue / 10000000).toFixed(2)} Crores` : `${(totalRevenue / 100000).toFixed(2)} Lakhs`}
+- Total Invoices Issued: ${overview?.total_invoices || 0} (Avg Deal: ₹${(parseFloat(overview?.avg_sale_value || 0) / 100000).toFixed(2)} Lakhs)
+- Sales Conversion Efficiency: ${overview?.conversion_rate || 0}%
+- Staffing & Clients: ${overview?.total_employees || 0} sales executives | ${overview?.total_customers || 0} registered customers
+- Top Vehicle Model: ${topModel ? `${topModel.Model} (₹${(parseFloat(topModel.total_revenue || 0) / 10000000).toFixed(2)} Cr, ${topModel.units_sold} units)` : 'N/A'}
+- Top Performing Executive: ${topEmployee ? `${topEmployee.Name} (₹${(parseFloat(topEmployee.revenue_generated || 0) / 10000000).toFixed(2)} Cr, ${topEmployee.invoices_closed} deals)` : 'N/A'}
+- Monthly Sales Velocity (${salesTrend?.length || 0} months): ${salesTrend?.map(m => `${m.label}: ₹${(parseFloat(m.revenue || 0) / 10000000).toFixed(2)} Cr`).join(', ') || 'N/A'}
 
-Provide exactly 5 insights. Do NOT use markdown. Use this exact format for each:
-INSIGHT: [Short heading]
-DETAIL: [One concise sentence]
+Provide exactly 5 business insights. Do NOT use markdown bold/italics. Use this exact format for each:
+INSIGHT: [Short executive heading, max 6 words]
+DETAIL: [One concise, data-driven analytical sentence]
 `;
 
         if (!openai) throw new Error('AI API Not Configured');
